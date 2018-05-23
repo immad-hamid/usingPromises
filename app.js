@@ -1,47 +1,61 @@
-// existing posts
-const posts = [
-    { title: 'Title One', body: 'This is Post One' },
-    { title: 'Title Two', body: 'This is Post Two' }
-];
+// get text
+document.getElementById('button1').addEventListener('click', getText);
 
-// create post function
-function createPost (post) {
-    return new Promise (
-        function (resolve, reject) {
-            setTimeout (
-                function () {
-                    posts.push(post);
-                    const error =  false;
+// get json
+document.getElementById('button2').addEventListener('click', getJson);
 
-                    error ? reject('Error: An error occured...') : resolve();
-                }, 
-            2000);
-        }
-    );
+// get api
+document.getElementById('button3').addEventListener('click', getApi);
+
+
+// get data from text file
+function getText() {
+    fetch('text.txt')
+        .then(function(res) {
+            return(res.text());
+        })
+        .then(function(data) {
+            document.getElementById('div').innerHTML = `
+                <h2>${data}</h2>
+            `
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
 }
 
-function getPosts () {
-    setTimeout (
-        function () {
-            let output = '';
-            posts.forEach (
-                function (post) {
-                    output += `
-                                <li>${post.title}</li>
-                                <li>${post.body}</li>
-                                <br>
-                              `
-                }
-            );
-            document.body.innerHTML = output;
-        }, 
-    2000);
+// get data from json file
+function getJson() {
+    fetch('text.json')
+        .then(function(res) {
+            return(res.json());
+        })
+        .then(function(data) {
+            data.forEach(el => {
+                document.getElementById('div').innerHTML += `
+                    <h2>${el.title}</h2>
+                `
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
 }
 
-createPost({ title: 'Title Two', body: 'This is Post Two' })
-.then(getPosts)
-.catch( 
-    function (err) {
-        console.log(err);
-    }
-);
+// get data from api
+function getApi() {
+    fetch('https://api.github.com/users')
+        .then(function(res) {
+            return(res.json());
+        })
+        .then(function(data) {
+            data.forEach(el => {
+                document.getElementById('div').innerHTML += `
+                    <h2>${el.login}</h2>
+                `
+            });
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
+}
